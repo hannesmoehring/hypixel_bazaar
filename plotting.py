@@ -87,3 +87,44 @@ def plot_multiple_products(
     plt.tight_layout()
 
     return plt
+
+
+def prophet_forecast(data: pd.DataFrame, forecast: pd.DataFrame) -> plt:
+    plt.figure(figsize=(12, 6))
+
+    plt.plot(
+        data["ds"],
+        data["y"],
+        marker="o",
+        linestyle="-",
+        label="data",
+        color="lime",
+    )
+
+    plt.plot(
+        forecast["ds"],
+        forecast["trend"],
+        marker="x",
+        linestyle="-",
+        label="Forecast",
+        color="red",
+    )
+
+    plt.plot(
+        forecast["ds"],
+        forecast["trend"],
+        marker="x",
+        linestyle="-",
+        label="Forecast",
+        color="red",
+    )
+
+    plt.title(f"YEEEEE")
+    plt.xlabel("Time")
+    plt.ylabel("Price")
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d-%m %H:%M"))
+    plt.xticks(rotation=45)
+    plt.tight_layout()

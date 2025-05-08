@@ -108,3 +108,15 @@ def convert_time(time_str: str):
     day, month = time_str.split("_")[0].split("-")
     hour, minute = time_str.split("_")[1].split("-")
     return datetime(2025, int(month), int(day), int(hour), int(minute))
+
+
+def prep_prophet(
+    df: pd.DataFrame, productId: str, metric: str = "inst_buyPrice"
+) -> pd.DataFrame:
+
+    train = pd.DataFrame()
+
+    train["y"] = df.loc[df["productId"] == productId, metric]
+    train["ds"] = df["time"].apply(convert_time)
+
+    return train.sort_values("ds")
