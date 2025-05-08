@@ -110,15 +110,6 @@ def prophet_forecast(data: pd.DataFrame, forecast: pd.DataFrame) -> plt:
         color="red",
     )
 
-    plt.plot(
-        forecast["ds"],
-        forecast["trend"],
-        marker="x",
-        linestyle="-",
-        label="Forecast",
-        color="red",
-    )
-
     plt.title(f"YEEEEE")
     plt.xlabel("Time")
     plt.ylabel("Price")
@@ -128,3 +119,5 @@ def prophet_forecast(data: pd.DataFrame, forecast: pd.DataFrame) -> plt:
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%d-%m %H:%M"))
     plt.xticks(rotation=45)
     plt.tight_layout()
+
+    return plt

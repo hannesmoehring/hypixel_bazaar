@@ -101,6 +101,7 @@ def init_dataframe(data: dict[int, dict]) -> pd.DataFrame:
             df = pd.concat([df, new_row], ignore_index=True)
         # print("finished import for time:", time)
         # print("\n")
+    df["datetime"] = df["time"].apply(convert_time)
     return df
 
 
