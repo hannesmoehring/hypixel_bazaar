@@ -122,17 +122,15 @@ def prep_prophet(
     return train.sort_values("ds")
 
 
-def prep_neuralprophet(df: pd.DataFrame, productId: str) -> tuple[pd.DataFrame, pd.DataFrame]:
+def prep_neuralprophet(df: pd.DataFrame, productId: str) -> pd.DataFrame:
 
     train = pd.DataFrame()
-    regressors = pd.DataFrame()
+
+    train["inst_sellPrice"] = df.loc[df["productId"] == productId, "inst_sellPrice"]
+    train["buyVolume"] = df.loc[df["productId"] == productId, "buyVolume"]
+    train["sellVolume"] = df.loc[df["productId"] == productId, "sellVolume"]
 
     train["y"] = df.loc[df["productId"] == productId, "inst_buyPrice"] 
     train["ds"] = df["time"].apply(convert_time)
 
-    regressors["ds"] = train["ds"]
-    regressors["inst_sellPrice"] = df.loc[df["productId"] == productId, "inst_sellPrice"]
-    regressors["buyVolume"] = df.loc[df["productId"] == productId, "buyVolume"]
-    regressors["sellVolume"] = df.loc[df["productId"] == productId, "sellVolume"]
-
-    return [train.sort_values("ds"), regressors.sort_values("ds")]
+    return train.sort_values("ds")

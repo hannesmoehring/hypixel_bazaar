@@ -1,6 +1,11 @@
 apiKey.txt
 swagger.json
 notes.md
+misc
+
+data/
+!data/test
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
