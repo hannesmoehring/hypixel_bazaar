@@ -112,8 +112,7 @@ def convert_time(time_str: str):
 
 
 def prep_prophet(
-    df: pd.DataFrame, productId: str, metric: str = "inst_buyPrice"
-) -> pd.DataFrame:
+    df: pd.DataFrame, productId: str, metric: str = "inst_buyPrice") -> pd.DataFrame:
 
     train = pd.DataFrame()
 
@@ -121,3 +120,19 @@ def prep_prophet(
     train["ds"] = df["time"].apply(convert_time)
 
     return train.sort_values("ds")
+
+
+def prep_neuralprophet(df: pd.DataFrame, productId: str) -> tuple[pd.DataFrame, pd.DataFrame]:
+
+    train = pd.DataFrame()
+    regressors = pd.DataFrame()
+
+    train["y"] = df.loc[df["productId"] == productId, "inst_buyPrice"] 
+    train["ds"] = df["time"].apply(convert_time)
+
+    regressors["ds"] = train["ds"]
+    regressors["inst_sellPrice"] = df.loc[df["productId"] == productId, "inst_sellPrice"]
+    regressors["buyVolume"] = df.loc[df["productId"] == productId, "buyVolume"]
+    regressors["sellVolume"] = df.loc[df["productId"] == productId, "sellVolume"]
+
+    return [train.sort_values("ds"), regressors.sort_values("ds")]
