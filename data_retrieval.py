@@ -13,19 +13,19 @@ def fetch_data_from_api(api):
     return response
 
 
-def save_data_to_json(data):
-    time = dt.now().strftime("%d-%m_%H-%M")
+def save_data_to_json(data, time:str):
     with open(f"{DATA_DIR}/data_{time}.json", "w") as outfile:
         json.dump(data, outfile, indent=4)
 
 
 def routine():
-    print("Fetching data from API...")
+    time = dt.now().strftime("%d-%m_%H-%M")
+    print(f"Fetching data from API at {time}...")
     data = fetch_data_from_api(API_URL)
     if data.status_code == 200:
         print("Data fetched successfully.")
         data = data.json()
-        save_data_to_json(data)
+        save_data_to_json(data, time)
         print("Data saved to JSON file.")
     else:
         print("Failed to fetch data.")
@@ -36,5 +36,8 @@ def routine():
 
 if __name__ == "__main__":
     while True:
-        routine()
-        time.sleep(600)
+        try:
+            routine()
+            time.sleep(900)
+        except Exception as e:
+            print(e)
