@@ -1,19 +1,14 @@
+import warnings
+
 import pandas as pd
-import torch
-import torch.optim.adamw
-import torch.serialization
-from neuralprophet import NeuralProphet
-from neuralprophet.configure import Train
+from neuralprophet import NeuralProphet, set_log_level
 from prophet import Prophet
 from pytorch_lightning import Trainer
 
 import data_prep
 
-#torch.serialization.add_safe_globals([torch.nn.modules.loss.SmoothL1Loss])
-#torch.serialization.add_safe_globals([torch.optim.AdamW])
-#torch.serialization.add_safe_globals([torch.optim.lr_scheduler.OneCycleLR])
-#torch.serialization.add_safe_globals([neuralprophet.configure.Trend])
-
+warnings.simplefilter(action='ignore', category=FutureWarning)
+set_log_level("ERROR")
 
 custom_trainer = Trainer(
     accelerator='mps', 
@@ -40,21 +35,30 @@ def prophet_routine(df: pd.DataFrame, productId: str, periods: int = 6):
 
 
 
-def neuralProphet_train(train: pd.DataFrame, useSellPriceRegressor: bool = True):
+def neuralProphet_train(train: pd.DataFrame):
     m = NeuralProphet(n_lags=6, n_forecasts=1) # autoregressive=True,
+    m.set_plotting_backend("plotly-static")
+
     m = m.add_lagged_regressor("buyVolume")
     m = m.add_lagged_regressor("sellVolume")
 
-    if useSellPriceRegressor: m = m.add_lagged_regressor("inst_sellPrice")
-    else: train.drop("inst_sellPrice")
+    if "inst_sellPrice" in train.columns: m = m.add_lagged_regressor("inst_sellPrice")
     
     metrics = m.fit(train, freq='10min', checkpointing=False) # , trainer=custom_trainer
     print(metrics)
 
+    return m
 
-def neuralProphet_predicting(m: NeuralProphet, train: pd.DataFrame):
-    future = m.make_future_dataframe(train, n_historic_predictions=True)
+
+def neuralProphet_predicting(m: NeuralProphet, train: pd.DataFrame, periods: int=60):
+    future = m.make_future_dataframe(train, n_historic_predictions=True, periods=periods)
+    future["buyVolume"] = future["buyVolume"].fillna(method="ffill")
+    future["sellVolume"] = future["sellVolume"].fillna(method="ffill")
+
+    
+
     forecast = m.predict(future)
 
-    return m.plot(forecast)
+    return forecast
+
 
