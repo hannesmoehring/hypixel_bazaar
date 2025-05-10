@@ -1,9 +1,13 @@
 import pandas as pd
+import torch.serialization
 from neuralprophet import NeuralProphet
+from neuralprophet.configure import Train
 from prophet import Prophet
 from pytorch_lightning import Trainer
 
 import data_prep
+
+torch.serialization.add_safe_globals([Train])
 
 custom_trainer = Trainer(
     accelerator='mps', 
@@ -40,7 +44,7 @@ def neuralProphet_train(df: pd.DataFrame, productId: str, useSellPriceRegressor:
     if useSellPriceRegressor: m = m.add_lagged_regressor("inst_sellPrice")
     else: train.drop("inst_sellPrice")
     
-    metrics = m.fit(train, freq='10min') # , trainer=custom_trainer
+    metrics = m.fit(train, freq='10min', checkpointing=False) # , trainer=custom_trainer
     print(metrics)
 
 

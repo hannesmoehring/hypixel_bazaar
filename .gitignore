@@ -2,7 +2,7 @@ apiKey.txt
 swagger.json
 notes.md
 misc
-
+.*
 data/
 !data/test
 
