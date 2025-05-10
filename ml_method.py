@@ -3,19 +3,12 @@ import warnings
 import pandas as pd
 from neuralprophet import NeuralProphet, set_log_level
 from prophet import Prophet
-from pytorch_lightning import Trainer
 
 import data_prep
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 set_log_level("ERROR")
 
-custom_trainer = Trainer(
-    accelerator='mps', 
-    devices=1,
-    max_epochs=220,     # Optional: override auto epoch setting
-    enable_model_summary=True, 
-)
 
 def propheting_prophet(model: Prophet, periods: int = 10):
     future = model.make_future_dataframe(periods, freq="h")
@@ -35,8 +28,8 @@ def prophet_routine(df: pd.DataFrame, productId: str, periods: int = 6):
 
 
 
-def neuralProphet_train(train: pd.DataFrame):
-    m = NeuralProphet(n_lags=6, n_forecasts=1) # autoregressive=True,
+def neuralProphet_train(train: pd.DataFrame, forecast_window: int = 24):
+    m = NeuralProphet(n_lags=12, n_forecasts=forecast_window) # autoregressive=True,
     m.set_plotting_backend("plotly-static")
 
     m = m.add_lagged_regressor("buyVolume")
@@ -51,7 +44,7 @@ def neuralProphet_train(train: pd.DataFrame):
 
 
 def neuralProphet_predicting(m: NeuralProphet, train: pd.DataFrame, periods: int=60):
-    future = m.make_future_dataframe(train, n_historic_predictions=True, periods=periods)
+    future = m.make_future_dataframe(train, n_historic_predictions=True) # periods=periods
 #    future["buyVolume"] = future["buyVolume"].fillna(method="ffill")
 #    future["sellVolume"] = future["sellVolume"].fillna(method="ffill")
     # or
@@ -59,7 +52,7 @@ def neuralProphet_predicting(m: NeuralProphet, train: pd.DataFrame, periods: int
 #    future["lagged_regressor_sellVolume1"] = future["lagged_regressor_sellVolume1"].fillna(method="ffill")
 
 # ich gucke mir im notebook nur forecast an nicht future, die lagged regressors müssen irgendwie anders gesetzt werden
-# vielleicht mit n_forecast höher (!!) wenn das nicht gut ist den lag von regressors erhöhen?
+# vielleicht mit n_forecast höher (!!) wenn das nicht gut ist den lag von regressors erhöh
     forecast = m.predict(future)
 
     return forecast

@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 from collections import Counter
 from datetime import datetime
 
@@ -58,3 +59,48 @@ def print_analysis_results(time_differences, counts):
 def routine(directory:str):
     time_diffs, counts = analyze_time_differences(directory)
     print_analysis_results(time_diffs, counts)
+
+
+def round_minute_to_5(dir_path):
+    pattern = re.compile(r"data_(\d{2}-\d{2})_(\d{2})-(\d{2})\.json")
+
+    for filename in os.listdir(dir_path):
+        match = pattern.match(filename)
+        if not match:
+            continue 
+
+        date, hour, minute = match.groups()
+        minute = int(minute)
+
+        rounded_minute = 5 * round(minute / 5)
+        if rounded_minute == 60:
+            rounded_minute = 55  
+
+        new_filename = f"data_{date}_{hour}-{rounded_minute:02d}.json"
+
+        old_path = os.path.join(dir_path, filename)
+        new_path = os.path.join(dir_path, new_filename)
+
+        if old_path != new_path:
+            os.rename(old_path, new_path)
+            print(f"Renamed: {filename} → {new_filename}")
+
+
+def copy_every_10_minutes(input_dir, output_dir):
+    os.makedirs(output_dir, exist_ok=True)
+    pattern = re.compile(r"data_(\d{2}-\d{2})_(\d{2})-(\d{2})\.json")
+
+    for filename in os.listdir(input_dir):
+        match = pattern.match(filename)
+        if not match:
+            continue 
+
+        minute = int(match.group(3))
+        if minute % 10 == 0:
+            src = os.path.join(input_dir, filename)
+            dst = os.path.join(output_dir, filename)
+            shutil.copy2(src, dst)
+            print(f"Copied: {filename}")
+
+
+#copy_every_10_minutes("data/20_30_min/", "data/prod_data/")

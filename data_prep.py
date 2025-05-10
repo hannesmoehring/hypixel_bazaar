@@ -4,8 +4,6 @@ from datetime import datetime
 
 import pandas as pd
 
-DATA_DIR = "data"
-
 # "productId": "SUPERBOOM_TNT",
 #                "sellPrice": 7.1000000000000005,       insta-sell-price
 #                "sellVolume": 560532,                  amount in sell offers
