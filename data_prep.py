@@ -4,8 +4,6 @@ from datetime import datetime
 
 import pandas as pd
 
-DATA_DIR = "data"
-
 # "productId": "SUPERBOOM_TNT",
 #                "sellPrice": 7.1000000000000005,       insta-sell-price
 #                "sellVolume": 560532,                  amount in sell offers
@@ -122,11 +120,11 @@ def prep_prophet(
     return train.sort_values("ds")
 
 
-def prep_neuralprophet(df: pd.DataFrame, productId: str) -> pd.DataFrame:
+def prep_neuralprophet(df: pd.DataFrame, productId: str, useSellPriceRegressor: bool = True) -> pd.DataFrame:
 
     train = pd.DataFrame()
 
-    train["inst_sellPrice"] = df.loc[df["productId"] == productId, "inst_sellPrice"]
+    if useSellPriceRegressor: train["inst_sellPrice"] = df.loc[df["productId"] == productId, "inst_sellPrice"]
     train["buyVolume"] = df.loc[df["productId"] == productId, "buyVolume"]
     train["sellVolume"] = df.loc[df["productId"] == productId, "sellVolume"]
 

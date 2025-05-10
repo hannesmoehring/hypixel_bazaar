@@ -5,6 +5,12 @@ misc
 .*
 data/
 !data/test
+.DS_Store
+venv_3_10
+venv_3_9
+
+lightning_logs
+neural_prophet
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

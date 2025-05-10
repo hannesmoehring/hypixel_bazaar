@@ -43,7 +43,7 @@ There are several interesting models for this, for now the **Meta Prophet** mode
 - clone this repository
     - ```git clone https://github.com/hannesmoehring/hypixel_bazaar.git```
 - create a virtual enviroment, i have been using ```Python3.13```
-    - ```python3.13 -m venv venv_hb```
+    - ```python3.9 -m venv venv_3_9```
 - activate the virtual environment (this part should work for mac and linux, look it up for windows)
     - ```cd hypixel_bazaar && source venv_hb/bin/activate```
 - proceed to install all needed dependencies 
