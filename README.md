@@ -53,5 +53,8 @@ There are several interesting models for this, for now the **Meta Prophet** mode
 
 ## examples
 
+- prophet prediction of an enchanted oak log
+    - ![prediction for enchanted oak log](./assets/img/simple_plot_oakLog.png)
+
 - First plotting on test data for an item
     - ![simple enchanted acacia graphic](./assets/img/enchanted_acacia_simple.png)

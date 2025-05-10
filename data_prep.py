@@ -52,6 +52,7 @@ def load_all_json(dir: str) -> dict[int, dict]:
 
 
 def init_dataframe(data: dict[int, dict]) -> pd.DataFrame:
+    rows = []
     keys: list[str] = list(data.keys())
     df = pd.DataFrame({col: pd.Series(dtype=typ) for col, typ in col_structure.items()})
 
@@ -63,42 +64,28 @@ def init_dataframe(data: dict[int, dict]) -> pd.DataFrame:
         # t_df.clear() # meant as an intermediate dataframe
         # print("starting import for time:", time)
         for item in bazaarItems:
-
             tempVal = data[time]["products"][item]["quick_status"]
-
-            prodId: str = tempVal["productId"]
-
-            inst_SP: float = tempVal["sellPrice"]
-            sellVol: int = tempVal["sellVolume"]
-            instSellPast: int = tempVal["sellMovingWeek"]
-            sellOrd: int = tempVal["sellOrders"]
-
-            inst_BP: float = tempVal["buyPrice"]
-            buyVol: int = tempVal["buyVolume"]
-            instBuyPast: int = tempVal["buyMovingWeek"]
-            buyOrd: int = tempVal["buyOrders"]
-
-            new_row = pd.DataFrame(
-                [
+            rows.append(
                     {
-                        "time": time,
-                        "productId": prodId,
+                        "time": str(time),
+                        "productId": str(tempVal["productId"]),
                         #
-                        "inst_sellPrice": inst_SP,
-                        "sellVolume": sellVol,
-                        "inst_sellPastWeek": instSellPast,
-                        "sellOrders": sellOrd,
+                        "inst_sellPrice": float(tempVal["sellPrice"]),
+                        "sellVolume": int(tempVal["sellVolume"]),
+                        "inst_sellPastWeek": int(tempVal["sellMovingWeek"]),
+                        "sellOrders": int(tempVal["sellOrders"]),
                         #
-                        "inst_buyPrice": inst_BP,
-                        "buyVolume": buyVol,
-                        "inst_buyPastWeek": instBuyPast,
-                        "buyOrders": buyOrd,
+                        "inst_buyPrice": float(tempVal["buyPrice"]),
+                        "buyVolume": int(tempVal["buyVolume"]),
+                        "inst_buyPastWeek": int(tempVal["buyMovingWeek"]),
+                        "buyOrders": int(tempVal["buyOrders"]),
                     }
-                ]
             )
-            df = pd.concat([df, new_row], ignore_index=True)
         # print("finished import for time:", time)
         # print("\n")
+
+    df = pd.DataFrame(rows)
+    df = df.astype(col_structure)
     df["datetime"] = df["time"].apply(convert_time)
     return df
 
