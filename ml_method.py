@@ -34,9 +34,7 @@ def prophet_routine(df: pd.DataFrame, productId: str, periods: int = 6):
 
 
 
-def neuralProphet_train(df: pd.DataFrame, productId: str, useSellPriceRegressor: bool = True):
-    train = data_prep.prep_neuralprophet(df, productId)
-
+def neuralProphet_train(train: pd.DataFrame, useSellPriceRegressor: bool = True):
     m = NeuralProphet(n_lags=6, n_forecasts=1) # autoregressive=True,
     m = m.add_lagged_regressor("buyVolume")
     m = m.add_lagged_regressor("sellVolume")
