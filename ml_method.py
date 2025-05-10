@@ -1,4 +1,6 @@
 import pandas as pd
+import torch
+import torch.optim.adamw
 import torch.serialization
 from neuralprophet import NeuralProphet
 from neuralprophet.configure import Train
@@ -7,7 +9,11 @@ from pytorch_lightning import Trainer
 
 import data_prep
 
-torch.serialization.add_safe_globals([Train])
+#torch.serialization.add_safe_globals([torch.nn.modules.loss.SmoothL1Loss])
+#torch.serialization.add_safe_globals([torch.optim.AdamW])
+#torch.serialization.add_safe_globals([torch.optim.lr_scheduler.OneCycleLR])
+#torch.serialization.add_safe_globals([neuralprophet.configure.Trend])
+
 
 custom_trainer = Trainer(
     accelerator='mps', 
