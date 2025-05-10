@@ -6,6 +6,9 @@ misc
 data/
 !data/test
 .DS_Store
+venv_3_10
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
