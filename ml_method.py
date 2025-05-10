@@ -52,11 +52,14 @@ def neuralProphet_train(train: pd.DataFrame):
 
 def neuralProphet_predicting(m: NeuralProphet, train: pd.DataFrame, periods: int=60):
     future = m.make_future_dataframe(train, n_historic_predictions=True, periods=periods)
-    future["buyVolume"] = future["buyVolume"].fillna(method="ffill")
-    future["sellVolume"] = future["sellVolume"].fillna(method="ffill")
+#    future["buyVolume"] = future["buyVolume"].fillna(method="ffill")
+#    future["sellVolume"] = future["sellVolume"].fillna(method="ffill")
+    # or
+#    future["lagged_regressor_buyVolume1"] = future["lagged_regressor_buyVolume1"].fillna(method="ffill")
+#    future["lagged_regressor_sellVolume1"] = future["lagged_regressor_sellVolume1"].fillna(method="ffill")
 
-    
-
+# ich gucke mir im notebook nur forecast an nicht future, die lagged regressors müssen irgendwie anders gesetzt werden
+# vielleicht mit n_forecast höher (!!) wenn das nicht gut ist den lag von regressors erhöhen?
     forecast = m.predict(future)
 
     return forecast
