@@ -86,7 +86,7 @@ def init_dataframe(data: dict[int, dict]) -> pd.DataFrame:
 
     df = pd.DataFrame(rows)
     df = df.astype(col_structure)
-    df["datetime"] = df["time"].apply(convert_time)
+    df["ds"] = df["time"].apply(convert_time)
     return df
 
 
@@ -102,7 +102,7 @@ def prep_prophet(
     train = pd.DataFrame()
 
     train["y"] = df.loc[df["productId"] == productId, metric]
-    train["ds"] = df["time"].apply(convert_time)
+    train["ds"] = df["ds"]
 
     return train.sort_values("ds")
 
@@ -116,6 +116,37 @@ def prep_neuralprophet(df: pd.DataFrame, productId: str, useSellPriceRegressor: 
     train["sellVolume"] = df.loc[df["productId"] == productId, "sellVolume"]
 
     train["y"] = df.loc[df["productId"] == productId, "inst_buyPrice"] 
-    train["ds"] = df["time"].apply(convert_time)
+    train["ds"] = df["ds"]
 
     return train.sort_values("ds")
+
+
+def values_to_dict(df: pd.DataFrame) -> pd.DataFrame:
+    def make_price_dict(group, col):
+        return dict(zip(group["ds"], group[col]))
+
+    grouped = df.groupby("productId")
+
+    result = grouped.apply(lambda g: pd.Series({
+        "inst_sellPrice": make_price_dict(g, "inst_sellPrice"),
+        "inst_buyPrice": make_price_dict(g, "inst_buyPrice"),
+        
+        "sellVolume": make_price_dict(g, "sellVolume"),
+        "buyVolume": make_price_dict(g, "buyVolume")
+    })).reset_index()
+
+    return result
+
+
+def values_to_list(df: pd.DataFrame) -> pd.DataFrame:
+    grouped = df.groupby("productId")
+
+    result = grouped.apply(lambda g: pd.Series({
+        "inst_sellPrice": list(g.sort_values("ds")["inst_sellPrice"]),
+        "inst_buyPrice": list(g.sort_values("ds")["inst_buyPrice"]),
+
+        "sellVolume": list(g.sort_values("ds")["sellVolume"]),
+        "buyVolume": list(g.sort_values("ds")["buyVolume"])
+    })).reset_index()
+
+    return result

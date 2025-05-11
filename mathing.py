@@ -35,3 +35,22 @@ def fft_analysis(
     dominant_period_hours: float = dominant_period_seconds / 3600
 
     return score, dominant_period_hours
+
+
+def calculate_corr(df: pd.DataFrame, method: str = "pearson") -> dict[str, pd.DataFrame]:
+    df_sellPrice = df[["ds", "inst_sellPrice"]].copy()
+    df_buyPrice = df[["ds", "inst_buyPrice"]].copy()
+
+    df_sellVolume = df[["ds", "sellVolume"]].copy()
+    df_buyVolume = df[["ds", "buyVolume"]].copy()
+
+
+    corr_data = {
+        "sellPrice" : df_sellPrice.corr(method),
+        "buyPrice" : df_buyPrice.corr(method),
+
+        "sellVolume" : df_sellVolume.corr(method),
+        "buyVolume" : df_buyVolume.corr(method)
+    }
+
+    return corr_data
