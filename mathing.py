@@ -98,3 +98,4 @@ def calculate_lagged_corr(pivot_data : dict, productId: str, n_lags: int, positi
     correlations = df.corrwith(shifted, method=method) 
     correlations[productId] = 0
     return correlations.sort_values(ascending=not positive_corr)
+
