@@ -37,12 +37,12 @@ def fft_analysis(
     return score, dominant_period_hours
 
 
-def calculate_corr(df: pd.DataFrame, method: str = "pearson") -> dict[str, pd.DataFrame]:   
-    df_sellPrice = df.pivot(index="ds", columns="productId", values="inst_sellPrice")
-    df_buyPrice = df.pivot(index="ds", columns="productId", values="inst_buyPrice")
+def calculate_corr(pivot_data: dict, method: str = "pearson") -> dict[str, pd.DataFrame]:   
+    df_sellPrice = pivot_data["sellPrice"]
+    df_buyPrice = pivot_data["buyPrice"]
 
-    df_sellVolume = df.pivot(index="ds", columns="productId", values="sellVolume")
-    df_buyVolume = df.pivot(index="ds", columns="productId", values="buyVolume")
+    df_sellVolume = pivot_data["sellVolume"]
+    df_buyVolume = pivot_data["buyVolume"]
 
 
     corr_sP = df_sellPrice.corr(method)
@@ -65,7 +65,7 @@ def calculate_corr(df: pd.DataFrame, method: str = "pearson") -> dict[str, pd.Da
         "buyVolume" : corr_bV,
     }
 
-    return corr_data, df_sellPrice
+    return corr_data
 
 
 def get_top_correlated(corr_df: pd.DataFrame, productId: str, positive_corr: bool = True, top_n: int = 10) -> pd.Series:
@@ -90,8 +90,11 @@ def get_top_correlated_pairs(corr_df: pd.DataFrame, positive_corr: bool = True, 
     return top_pairs[["product_1", "product_2", "correlation"]]
 
 
-def calculate_lagged_corr(df: pd.DataFrame, productId: str, n_lags: int, positive_corr: bool = True, method: str = "pearson"):
-    temp = df[productId].shift(n_lags)
-    correlations = df.corrwith(temp, method=method)
-    correlations[productId] = 0 # no self thing
-    return correlations.sort_values(ascending= not positive_corr)
+
+def calculate_lagged_corr(pivot_data : dict, productId: str, n_lags: int, positive_corr: bool = True, metric: str = "buyPrice", method: str = "pearson"):
+    # if a product has a good corr it might predict productId n steps into the future 
+    df = pivot_data[metric]
+    shifted = df[productId].shift(-n_lags)
+    correlations = df.corrwith(shifted, method=method) 
+    correlations[productId] = 0
+    return correlations.sort_values(ascending=not positive_corr)
