@@ -37,20 +37,61 @@ def fft_analysis(
     return score, dominant_period_hours
 
 
-def calculate_corr(df: pd.DataFrame, method: str = "pearson") -> dict[str, pd.DataFrame]:
-    df_sellPrice = df[["ds", "inst_sellPrice"]].copy()
-    df_buyPrice = df[["ds", "inst_buyPrice"]].copy()
+def calculate_corr(df: pd.DataFrame, method: str = "pearson") -> dict[str, pd.DataFrame]:   
+    df_sellPrice = df.pivot(index="ds", columns="productId", values="inst_sellPrice")
+    df_buyPrice = df.pivot(index="ds", columns="productId", values="inst_buyPrice")
 
-    df_sellVolume = df[["ds", "sellVolume"]].copy()
-    df_buyVolume = df[["ds", "buyVolume"]].copy()
+    df_sellVolume = df.pivot(index="ds", columns="productId", values="sellVolume")
+    df_buyVolume = df.pivot(index="ds", columns="productId", values="buyVolume")
 
 
+    corr_sP = df_sellPrice.corr(method)
+    corr_bP = df_buyPrice.corr(method)
+
+    corr_sV = df_sellVolume.corr(method)
+    corr_bV = df_buyVolume.corr(method)
+
+    np.fill_diagonal(corr_sP.values, 0)
+    np.fill_diagonal(corr_bP. values, 0)
+
+    np.fill_diagonal(corr_sV.values, 0)
+    np.fill_diagonal(corr_bV.values, 0)
+    
     corr_data = {
-        "sellPrice" : df_sellPrice.corr(method),
-        "buyPrice" : df_buyPrice.corr(method),
+        "sellPrice" : corr_sP,
+        "buyPrice" : corr_bP,
 
-        "sellVolume" : df_sellVolume.corr(method),
-        "buyVolume" : df_buyVolume.corr(method)
+        "sellVolume" : corr_sV,
+        "buyVolume" : corr_bV,
     }
 
-    return corr_data
+    return corr_data, df_sellPrice
+
+
+def get_top_correlated(corr_df: pd.DataFrame, productId: str, positive_corr: bool = True, top_n: int = 10) -> pd.Series:
+    return corr_df[productId].sort_values(ascending= not positive_corr).head(top_n)
+
+
+def get_top_correlated_pairs(corr_df: pd.DataFrame, positive_corr: bool = True, top_n: int = 10) -> pd.DataFrame:
+    temp = corr_df.unstack()
+    if temp.index.names[0] == temp.index.names[1]:
+        temp.index = temp.index.set_names(["product_1", "product_2"])
+
+    temp = temp.reset_index()
+    temp.columns = ["product_1", "product_2", "correlation"]
+
+    temp = temp[temp["product_1"] != temp["product_2"]]
+
+    temp["pair"] = temp.apply(lambda row: tuple(sorted([row["product_1"], row["product_2"]])), axis=1)
+    temp = temp.drop_duplicates("pair")
+
+    top_pairs = temp.sort_values("correlation", ascending=not positive_corr).head(top_n)
+
+    return top_pairs[["product_1", "product_2", "correlation"]]
+
+
+def calculate_lagged_corr(df: pd.DataFrame, productId: str, n_lags: int, positive_corr: bool = True, method: str = "pearson"):
+    temp = df[productId].shift(n_lags)
+    correlations = df.corrwith(temp, method=method)
+    correlations[productId] = 0 # no self thing
+    return correlations.sort_values(ascending= not positive_corr)

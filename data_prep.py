@@ -121,23 +121,6 @@ def prep_neuralprophet(df: pd.DataFrame, productId: str, useSellPriceRegressor: 
     return train.sort_values("ds")
 
 
-def values_to_dict(df: pd.DataFrame) -> pd.DataFrame:
-    def make_price_dict(group, col):
-        return dict(zip(group["ds"], group[col]))
-
-    grouped = df.groupby("productId")
-
-    result = grouped.apply(lambda g: pd.Series({
-        "inst_sellPrice": make_price_dict(g, "inst_sellPrice"),
-        "inst_buyPrice": make_price_dict(g, "inst_buyPrice"),
-        
-        "sellVolume": make_price_dict(g, "sellVolume"),
-        "buyVolume": make_price_dict(g, "buyVolume")
-    })).reset_index()
-
-    return result
-
-
 def values_to_list(df: pd.DataFrame) -> pd.DataFrame:
     grouped = df.groupby("productId")
 
@@ -150,3 +133,4 @@ def values_to_list(df: pd.DataFrame) -> pd.DataFrame:
     })).reset_index()
 
     return result
+
