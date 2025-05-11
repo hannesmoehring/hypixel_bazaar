@@ -52,7 +52,7 @@ def calculate_corr(pivot_data: dict, method: str = "pearson") -> dict[str, pd.Da
     corr_bV = df_buyVolume.corr(method)
 
     np.fill_diagonal(corr_sP.values, 0)
-    np.fill_diagonal(corr_bP. values, 0)
+    np.fill_diagonal(corr_bP.values, 0)
 
     np.fill_diagonal(corr_sV.values, 0)
     np.fill_diagonal(corr_bV.values, 0)
