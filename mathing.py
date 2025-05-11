@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+DATA_FREQUENCY = 600
 
 def fft_analysis(
     df: pd.DataFrame, productId: str, metric: str = "inst_sellPrice"
@@ -11,7 +12,7 @@ def fft_analysis(
     )
 
     N: int = len(product_data)
-    dt: int = 1800  # 1800 seconds = 30 minutes
+    dt: int = 600  # 600 seconds = 10 minutes
     t = np.arange(N) * dt  # for plotting
     values: list[float | int] = list(product_data[metric])
 
@@ -27,7 +28,6 @@ def fft_analysis(
         power_spectrum
     )  # score 0 to 1, 0 not periodic, 1 yes
 
-    # calculating the dominant period, where a pattern repeats strongly
     dominant_idx = np.argmax(fft_magnitude)
     dominant_freq = fft_freqs[dominant_idx]
     dominant_period_seconds: float = 1 / dominant_freq
