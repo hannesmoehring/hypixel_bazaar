@@ -6,8 +6,8 @@ import requests
 
 API_URL_MAYOR = "https://api.hypixel.net/v2/resources/skyblock/election"
 API_URL_BAZAAR = "https://api.hypixel.net/v2/skyblock/bazaar"
-DATA_DIR_BAZAAR = "abc/bz"
-DATA_DIR_MAYOR = "abc/mayor"
+DATA_DIR_BAZAAR = "data/bz"
+DATA_DIR_MAYOR = "data/mayor"
 
 
 def fetch_data_bazaar(api, time):
