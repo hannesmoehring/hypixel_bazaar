@@ -15,7 +15,7 @@ def fetch_data_bazaar(api, time):
     if data.status_code == 200:
         print("Data fetched successfully for BAZAAR.")
         data = data.json()
-        save_data_to_json(data, DATA_DIR_BAZAAR, time)
+        save_data_to_json(data,"bz", DATA_DIR_BAZAAR, time)
         print("Data saved to JSON file.")
     else:
         print("Failed to fetch data for BAZAAR.")
@@ -28,7 +28,7 @@ def fetch_data_mayor(api, time):
     if data.status_code == 200:
         print("Data fetched successfully for MAYOR.")
         data = data.json()
-        save_data_to_json(data, DATA_DIR_MAYOR, time)
+        save_data_to_json(data,"mayor", DATA_DIR_MAYOR, time)
         print("Data saved to JSON file.")
     else:
         print(data)
@@ -37,8 +37,8 @@ def fetch_data_mayor(api, time):
 
 
 
-def save_data_to_json(data, dir, time:str):
-    with open(f"{dir}/data_{time}.json", "w") as outfile:
+def save_data_to_json(data, type, dir, time:str):
+    with open(f"{dir}/{type}_{time}.json", "w") as outfile:
         json.dump(data, outfile, indent=4)
 
 
