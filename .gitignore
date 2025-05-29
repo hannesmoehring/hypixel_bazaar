@@ -8,7 +8,7 @@ data/
 .DS_Store
 venv_3_10
 venv_3_9
-
+backup
 lightning_logs
 neural_prophet
 
