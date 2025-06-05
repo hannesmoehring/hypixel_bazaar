@@ -11,7 +11,9 @@ backup
 lightning_logs
 neural_prophet
 
-
+*.zip
+*.tar.gz
+*.tar.bz2
 .next
 # Byte-compiled / optimized / DLL files
 __pycache__/
