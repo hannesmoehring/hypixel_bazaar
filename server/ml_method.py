@@ -1,10 +1,9 @@
 import warnings
 
+import data_prep
 import pandas as pd
 from neuralprophet import NeuralProphet, set_log_level
 from prophet import Prophet
-
-import data_prep
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 set_log_level("ERROR")
