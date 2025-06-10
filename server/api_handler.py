@@ -9,7 +9,8 @@ app = FastAPI(title="Minecraft-Stocks API")
 
 dataframe = pd.read_pickle(os.path.join("data", "local_pickle", "cached_df.pkl"))
 
-origins = ["http://localhost:3000"]
+# origins = ["http://localhost:3000"]
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins, allow_credentials=True,
@@ -20,10 +21,7 @@ app.add_middleware(
 
 @app.get("/api/ticker")
 async def ticker(product: str = Query(...)):
-    df = load_timeseries(product)
-    return df.reset_index()             \
-             .rename(columns={"index": "time"}) \
-             .to_dict(orient="records")
+    return "alive"
 
 @app.get("/api/product/{prodId}")
 async def getProduct(prodId : str):
