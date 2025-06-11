@@ -47,7 +47,7 @@ export function CorrelationBarChart({ correlationData }: { correlationData: Corr
                         />
                         <XAxis dataKey="product" tick={false} axisLine={false} />
                         <ReferenceLine y={0} stroke="#575656" strokeWidth={1} />
-                        <Bar dataKey="correlation">
+                        <Bar dataKey="correlation" radius={[2, 2, 0, 0]}>
                             {chartData.map((item) => (
                                 <Cell
                                     key={item.product}
