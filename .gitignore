@@ -10,7 +10,7 @@ venv_3_9
 backup
 lightning_logs
 neural_prophet
-
+!types.ts
 *.zip
 *.tar.gz
 *.tar.bz2

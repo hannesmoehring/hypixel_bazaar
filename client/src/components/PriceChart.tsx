@@ -38,7 +38,7 @@ export function PriceChart({ product }: { product: string }) {
                         <YAxis />
                         <Tooltip />
                         <Line dataKey="inst_buyPrice" dot={false} strokeWidth={2} />
-                        <Line dataKey="inst_sellPrices" dot={false} strokeDasharray="4 2" />
+                        <Line dataKey="inst_sellPrice" dot={false} strokeDasharray="4 2" />
                     </LineChart>
                 </ResponsiveContainer>
             </CardContent>
