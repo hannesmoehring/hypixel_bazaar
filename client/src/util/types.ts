@@ -9,3 +9,6 @@ export type ApiResponse = {
     inst_buyPastWeek: number;
     buyOrders: number;
 };
+export type ProductKey = keyof ApiResponse;
+export type KeyTuple = [keyof ApiResponse, keyof ApiResponse];
+export type CorrelationData = Record<string, number>;

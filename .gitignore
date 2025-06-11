@@ -10,7 +10,6 @@ venv_3_9
 backup
 lightning_logs
 neural_prophet
-!types.ts
 *.zip
 *.tar.gz
 *.tar.bz2
@@ -249,7 +248,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-
+!.env.local
 # vercel
 .vercel
 

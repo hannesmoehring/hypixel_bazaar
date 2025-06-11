@@ -68,8 +68,10 @@ def calculate_corr(pivot_data: dict, method: str = "pearson") -> dict[str, pd.Da
     return corr_data
 
 
-def get_top_correlated(corr_df: pd.DataFrame, productId: str, positive_corr: bool = True, top_n: int = 10) -> pd.Series:
-    return corr_df[productId].sort_values(ascending= not positive_corr).head(top_n)
+def get_top_correlated(corr_df: pd.DataFrame, productId: str, positive_corr: bool = True, top_n: int = 5, use_abs: bool = False) -> pd.Series:
+    series = corr_df[productId]
+    sorted_series = series.abs().sort_values(ascending=False) if use_abs else series.sort_values(ascending=False)
+    return series.loc[sorted_series.index[:top_n]]
 
 
 def get_top_correlated_pairs(corr_df: pd.DataFrame, positive_corr: bool = True, top_n: int = 10) -> pd.DataFrame:
