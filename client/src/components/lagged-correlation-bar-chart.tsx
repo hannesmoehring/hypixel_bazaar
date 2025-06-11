@@ -35,7 +35,7 @@ export function LaggedCorrelationBarChart({ productId, defaultLag = 0 }: { produ
     } = useQuery({
         queryKey: ['laggedCorrelation', productId, lag],
         queryFn: () => fetchLaggedCorrelation(productId, lag),
-        //keepPreviousData: true,
+        placeholderData: (previousData) => previousData, // so viel schöner
     });
 
     let content = null;

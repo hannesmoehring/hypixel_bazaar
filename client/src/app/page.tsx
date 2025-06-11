@@ -1,120 +1,42 @@
-'use client';
-
-import { useState } from 'react';
-import { Input } from '@/components/ui/input';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ChartAreaInteractive } from '@/components/chart-area-interactive';
-import { CorrelationBarChart } from '@/components/correlation-bar-chart';
-import { LaggedCorrelationBarChart } from '@/components/lagged-correlation-bar-chart';
-import { useQuery, useQueries } from '@tanstack/react-query';
-import { ApiResponse, CorrelationData } from '@/util/types';
-import { Card, CardContent } from '@/components/ui/card';
-import { X } from 'lucide-react';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
-
-const fetchProduct = async (product: string): Promise<ApiResponse[]> => {
-    const res = await fetch(`${API_URL}/api/product/${product}`);
-    if (!res.ok) throw new Error('Failed to fetch product data');
-    return res.json();
-};
-
-const fetchCorrelation = async (product: string): Promise<CorrelationData> => {
-    const res = await fetch(`${API_URL}/api/correlation/${product}?metric=sellPrice&method=pearson`);
-    if (!res.ok) throw new Error('Failed to fetch correlation data');
-    return res.json();
-};
-
-export default function Dashboard() {
-    const [input, setInput] = useState('');
-    const [products, setProducts] = useState<string[]>(['ENCHANTED_DIAMOND']);
-
-    const addProduct = () => {
-        const trimmed = input.trim().toUpperCase();
-        if (trimmed && !products.includes(trimmed)) {
-            setProducts([...products, trimmed]);
-        }
-        setInput('');
-    };
-
-    const removeProduct = (product: string) => {
-        setProducts((prev) => prev.filter((p) => p !== product));
-    };
-
-    const productQueries = useQueries({
-        queries: products.map((product) => ({
-            queryKey: ['product', product],
-            queryFn: () => fetchProduct(product),
-            refetchInterval: 600_000,
-        })),
-    });
-
+export default function Home() {
     return (
-        <main className="p-6 space-y-6">
-            <div className="flex gap-2">
-                <Input
-                    placeholder="Enter product key…"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && addProduct()}
-                />
-                <Button onClick={addProduct}>Add</Button>
+        <main className="flex flex-col items-center justify-start min-h-screen px-4 pt-50">
+            <h1 className="text-3xl md:text-5xl font-bold text-center mb-6">
+                Computational Approaches to In-Game Bazaar Analysis
+            </h1>
+            <p className="max-w-2xl text-center text-muted-foreground mb-10 pt-8">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat nulla pariatur.
+                <br />
+                <a
+                    href="https://github.com/your-username/your-repo"
+                    className="underline text-blue-600 hover:text-blue-800"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    View on GitHub
+                </a>
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-md pt-10">
+                <Link href="/quick-overview">
+                    <Button className="w-full">Quick Overview</Button>
+                </Link>
+                <Link href="/general-ranking">
+                    <Button className="w-full">General Ranking</Button>
+                </Link>
+                <Link href="/advanced">
+                    <Button className="w-full">Advanced Information</Button>
+                </Link>
+                <Link href="/ai-prediction">
+                    <Button className="w-full">AI Prediction</Button>
+                </Link>
             </div>
-
-            {productQueries.map((query, index) => {
-                const product = products[index];
-                const { data, isLoading, isError } = query;
-                const {
-                    data: correlationData,
-                    isLoading: corrLoading,
-                    isError: corrError,
-                } = useQuery({
-                    queryKey: ['correlation', product],
-                    queryFn: () => fetchCorrelation(product),
-                });
-
-                return (
-                    <Card key={product}>
-                        <CardContent className="pt-4">
-                            <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-lg font-semibold">{product}</h3>
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    onClick={() => removeProduct(product)}
-                                    className="text-muted-foreground"
-                                >
-                                    <X className="w-4 h-4" />
-                                </Button>
-                            </div>
-                            {isLoading && <p>Loading…</p>}
-                            {isError && <p className="text-red-600">Error loading data</p>}
-                            {data && (
-                                <>
-                                    <ChartAreaInteractive
-                                        productData={data}
-                                        productKeys={['inst_buyPrice', 'inst_sellPrice']}
-                                    />
-                                    <ChartAreaInteractive
-                                        productData={data}
-                                        productKeys={['inst_buyPastWeek', 'inst_sellPastWeek']}
-                                    />
-                                    <ChartAreaInteractive
-                                        productData={data}
-                                        productKeys={['sellVolume', 'buyVolume']}
-                                    />
-                                    {correlationData && (
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
-                                            <CorrelationBarChart correlationData={correlationData} />
-                                            <LaggedCorrelationBarChart productId={product} />
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                        </CardContent>
-                    </Card>
-                );
-            })}
         </main>
     );
 }
