@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { CorrelationData } from '@/util/types';
 
-export const description = 'A bar chart with negative values';
+export const description = '';
 
 const chartConfig = {
     correlation: {
@@ -38,14 +38,15 @@ export function CorrelationBarChart({ correlationData }: { correlationData: Corr
                             content={<ChartTooltipContent hideIndicator labelFormatter={(label) => label} />}
                         />
                         <YAxis
-                            domain={[-1, 1]}
+                            domain={[-1, 1.04]} //TODO: change this to be -1, 1 but also make sure the the 1 is visible
                             ticks={[1, 0.5, 0, -0.5, -1]}
                             axisLine={false}
                             tickLine={false}
                             allowDataOverflow={true}
+                            type="number"
                         />
                         <XAxis dataKey="product" tick={false} axisLine={false} />
-                        <ReferenceLine y={0} stroke="#ccc" strokeWidth={1} />
+                        <ReferenceLine y={0} stroke="#575656" strokeWidth={1} />
                         <Bar dataKey="correlation">
                             {chartData.map((item) => (
                                 <Cell
