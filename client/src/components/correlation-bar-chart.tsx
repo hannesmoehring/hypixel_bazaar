@@ -24,7 +24,7 @@ export function CorrelationBarChart({ correlationData }: { correlationData: Corr
         .sort((a, b) => Math.abs(b.correlation) - Math.abs(a.correlation));
 
     return (
-        <Card>
+        <Card className="pt-0 border-none shadow-none rounded-none">
             <CardHeader>
                 <CardTitle>1:1 Correlation</CardTitle>
                 <CardDescription>Top 5 stronges Pearson Correlation</CardDescription>

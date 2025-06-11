@@ -93,10 +93,12 @@ def get_top_correlated_pairs(corr_df: pd.DataFrame, positive_corr: bool = True, 
 
 
 
-def calculate_lagged_corr(pivot_data : dict, productId: str, n_lags: int, positive_corr: bool = True, metric: str = "buyPrice", method: str = "pearson"):
+def calculate_lagged_corr(pivot_data : dict, productId: str, n_lags: int, positive_corr: bool = True, metric: str = "sellPrice", method: str = "pearson", use_abs : bool = False, top_n : int = 5):
     # if a product has a good corr it might predict productId n steps into the future 
     df = pivot_data[metric]
     shifted = df[productId].shift(-n_lags)
     correlations = df.corrwith(shifted, method=method) 
     correlations[productId] = 0
-    return correlations.sort_values(ascending=not positive_corr)
+    
+    sorted_corr = correlations.abs().sort_values(ascending=False) if use_abs else correlations.sort_values(ascending=not positive_corr)
+    return correlations.loc[sorted_corr.index[:top_n]]

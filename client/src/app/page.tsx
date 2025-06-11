@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ChartAreaInteractive } from '@/components/chart-area-interactive';
 import { CorrelationBarChart } from '@/components/correlation-bar-chart';
+import { LaggedCorrelationBarChart } from '@/components/lagged-correlation-bar-chart';
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { ApiResponse, CorrelationData } from '@/util/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,7 +20,7 @@ const fetchProduct = async (product: string): Promise<ApiResponse[]> => {
 };
 
 const fetchCorrelation = async (product: string): Promise<CorrelationData> => {
-    const res = await fetch(`${API_URL}/api/correlation/${product}?prodKey=sellPrice&method=pearson`);
+    const res = await fetch(`${API_URL}/api/correlation/${product}?metric=sellPrice&method=pearson`);
     if (!res.ok) throw new Error('Failed to fetch correlation data');
     return res.json();
 };
@@ -105,7 +106,7 @@ export default function Dashboard() {
                                     {correlationData && (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
                                             <CorrelationBarChart correlationData={correlationData} />
-                                            <CorrelationBarChart correlationData={correlationData} />
+                                            <LaggedCorrelationBarChart productId={product} />
                                         </div>
                                     )}
                                 </>

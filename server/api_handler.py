@@ -32,8 +32,12 @@ async def getProduct(prodId : str):
     return load_timeseries(product=prodId, DF=dataframe)
 
 @app.get("/api/correlation/{prodId}")
-async def getTopCorrelation(prodId : str, prodKey : str = "sellPrice", method : str = "pearson"):
-    return mathing.get_top_correlated(corr_data[prodKey], prodId, use_abs=True)
+async def getTopCorrelation(prodId : str, metric : str = "sellPrice", method : str = "pearson"):
+    return mathing.get_top_correlated(corr_data[metric], prodId, use_abs=True)
+
+@app.get("/api/lagged_correlation/{prodId}")
+async def getTopLaggedCorrelation(prodId : str, metric : str = "sellPrice", method : str = "pearson", lagSteps : int = 0):
+    return mathing.calculate_lagged_corr(pivot_data=pivot_data, productId=prodId, n_lags=lagSteps, metric=metric, use_abs=True)
 
 
 if __name__ == "__main__":
